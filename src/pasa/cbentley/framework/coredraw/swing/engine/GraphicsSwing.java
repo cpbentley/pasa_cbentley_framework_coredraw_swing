@@ -26,32 +26,17 @@ import pasa.cbentley.core.src4.utils.BitUtils;
 import pasa.cbentley.core.src4.utils.ColorUtils;
 import pasa.cbentley.framework.coredraw.j2se.engine.GraphicsJ2SE;
 import pasa.cbentley.framework.coredraw.src4.ctx.IEventsCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.ctx.ITechCtxSettingsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImage;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IMFont;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechDrawer;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFeaturesDraw;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
 import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
 
 public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventConsumer {
-
-   public static final int          BASELINE  = 64;
-
-   public static final int          BOTTOM    = 32;
-
-   public static final int          DOTTED    = 1;
-
-   public static final int          HCENTER   = 1;
-
-   public static final int          LEFT      = 4;
-
-   public static final int          RIGHT     = 8;
-
-   public static final int          SOLID     = 0;
-
-   public static final int          TOP       = 16;
-
-   public static final int          VCENTER   = 2;
 
    /** 
     * Rectangle for getting the AWT clip information into 
@@ -528,15 +513,15 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    /**
     * Is the feature enable for this specific {@link IGraphics} instance
     * 
-    * <li> {@link ITechDrawer#SUP_ID_03_OPEN_GL}
-    * <li> {@link ITechDrawer#SUP_ID_04_ALIAS}
-    * <li> {@link ITechDrawer#SUP_ID_10_TRANSPARENT_BACKGROUND}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_03_OPEN_GL}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_04_ALIAS}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_10_TRANSPARENT_BACKGROUND}
     * 
     * @param featureID
     * @return true if feature could be enabled/disabled
     */
    public boolean featureEnable(int featureID, boolean enable) {
-      if (featureID == SUP_ID_04_ALIAS) {
+      if (featureID == ITechFeaturesDraw.SUP_ID_04_ALIAS) {
          if (tech == null) {
             //return the default settings
             createTech();
@@ -662,15 +647,15 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    /**
     * Is the feature enable for this specific {@link IGraphics} instance
     * 
-    * <li> {@link ITechDrawer#SUP_ID_03_OPEN_GL}
-    * <li> {@link ITechDrawer#SUP_ID_04_ALIAS}
-    * <li> {@link ITechDrawer#SUP_ID_10_TRANSPARENT_BACKGROUND}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_03_OPEN_GL}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_04_ALIAS}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_10_TRANSPARENT_BACKGROUND}
     * 
     * @param featureID
     * @return
     */
    public boolean hasFeatureEnabled(int featureID) {
-      if (featureID == SUP_ID_04_ALIAS) {
+      if (featureID == ITechFeaturesDraw.SUP_ID_04_ALIAS) {
          if (tech == null) {
             //return the default settings
          } else {
@@ -686,7 +671,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    }
 
    /**
-    * <li> {@link IGraphics#IMPL_FLAG_1_ANTI_ALIAS}
+    * <li> {@link ITechGraphics#IMPL_FLAG_1_ANTI_ALIAS}
     * 
     * Link to the IMo
     */
@@ -740,7 +725,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    public void setStrokeStyle(int style) {
       Stroke str = graphics.getStroke();
       //System.out.println(((BasicStroke) str).getLineWidth());
-      if (style == IGraphics.DOTTED) {
+      if (style == ITechGraphics.DOTTED) {
          gStroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 1.0f, new float[] { 2.0f }, 1.0f);
       } else {
          gStroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
@@ -763,10 +748,16 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    public void toString(Dctx dc) {
       dc.root(this, GraphicsSwing.class, "@line5");
       toStringPrivate(dc);
-      super.toString(dc.sup());
       dc.appendColorWithSpace("color", color);
       dc.appendVarWithSpace("translate_x", translate_x);
       dc.appendVarWithSpace("translate_y", translate_y);
+      super.toString(dc.sup());
+
+      dc.setFlagData(scc, IFlagToStringCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES, true);
+      dc.setFlagData(scc, IFlagToStringCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, false);
+      dc.nlLvl(fontSwing, "Current FontSwing");
+
+      scc.getSwingCoreCtx().toSCD().d(graphics, dc);
    }
 
    private void toStringPrivate(Dctx dc) {

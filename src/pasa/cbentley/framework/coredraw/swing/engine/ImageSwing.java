@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import pasa.cbentley.framework.coredraw.j2se.engine.ImageJ2SE;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
 import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
 
 /**
@@ -105,7 +106,7 @@ public class ImageSwing extends ImageJ2SE {
 
    /**
     * 
-    * {@link IGraphics#IMPL_FLAG_3_TRANS_BACKGROUND}
+    * {@link ITechGraphics#IMPL_FLAG_3_TRANS_BACKGROUND}
     * is supported anyways and will be.
     * 
     * Creates relevant {@link IGraphics} object.

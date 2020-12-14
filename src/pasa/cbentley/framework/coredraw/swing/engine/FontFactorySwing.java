@@ -5,13 +5,17 @@
 package pasa.cbentley.framework.coredraw.swing.engine;
 
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import pasa.cbentley.core.swing.stringables.StringableFontAwt;
 import pasa.cbentley.framework.coredraw.j2se.engine.FontFactoryJ2SE;
 import pasa.cbentley.framework.coredraw.src4.ctx.ToStringStaticCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.engine.VisualState;
@@ -28,13 +32,7 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       this.scc = scc;
       //this is parametrize by launch values
 
-      fontPoints = new int[SIZE_X_NUM];
-      fontPoints[SIZE_0_DEFAULT] = 12;
-      fontPoints[SIZE_1_TINY] = 8;
-      fontPoints[SIZE_2_SMALL] = 10;
-      fontPoints[SIZE_3_MEDIUM] = 12;
-      fontPoints[SIZE_4_LARGE] = 16;
-      fontPoints[SIZE_5_HUGE] = 22;
+      fontPoints = scc.getConfigCoreDrawJ2se().getFontPoints();
    }
 
    public int getFontPoint(int size) {
@@ -54,24 +52,6 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
    }
 
-   public String[] getMonoSpaceFonts() {
-      Font fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-      List monoFonts1 = new ArrayList();
-
-      FontRenderContext frc = new FontRenderContext(null, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-      for (Font font : fonts) {
-         Rectangle2D iBounds = font.getStringBounds("i", frc);
-         Rectangle2D mBounds = font.getStringBounds("m", frc);
-         if (iBounds.getWidth() == mBounds.getWidth()) {
-            monoFonts1.add(font);
-         }
-      }
-      String[] ar = new String[monoFonts1.size()];
-      for (int i = 0; i < ar.length; i++) {
-         ar[i] = ((Font) monoFonts1.get(i)).getFontName();
-      }
-      return ar;
-   }
 
    public void setFontRatio(int ratio, int etalon) {
       IMFont f = getDefaultFont();
@@ -88,7 +68,6 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       fontPoints = vs.fontPoints[0];
    }
 
-   
    public IMFont getFont(int face, int style, int size) {
       IMFont f = getFontCached(face, style, size);
       if (f == null) {
@@ -98,7 +77,7 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       return f;
    }
 
-   
+
    public float getFontScale(int size) {
       return 1;
    }
@@ -118,15 +97,7 @@ public class FontFactorySwing extends FontFactoryJ2SE {
 
    }
 
-   public IMFont getDefaultFontMono() {
-      // TODO Auto-generated method stub
-      return null;
-   }
 
-   public IMFont getDefaultFontProportional() {
-      // TODO Auto-generated method stub
-      return null;
-   }
 
    public int getFontPointExtraShift() {
       // TODO Auto-generated method stub

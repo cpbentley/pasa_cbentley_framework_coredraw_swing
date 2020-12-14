@@ -7,5 +7,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/pasa_cbentley_framework_coredraw_j2se"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pasa_cbentley_framework_coredraw_src4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pasa_cbentley_layouter_src4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pasa_cbentley_core_j2se"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pasa_cbentley_core_swing"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
