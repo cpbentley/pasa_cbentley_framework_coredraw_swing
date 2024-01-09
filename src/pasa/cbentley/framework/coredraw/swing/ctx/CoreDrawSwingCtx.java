@@ -71,6 +71,10 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       if (this.getClass() == CoreDrawSwingCtx.class) {
          a_Init();
       }
+      
+      //#debug
+      toDLog().pInit("Created", this, CoreDrawSwingCtx.class, "CoreDrawSwingCtx", LVL_05_FINE, true);
+      
    }
 
    /**

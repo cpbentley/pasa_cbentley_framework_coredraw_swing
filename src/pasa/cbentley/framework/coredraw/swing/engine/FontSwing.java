@@ -89,6 +89,9 @@ public class FontSwing extends FontJ2SE {
       return fontMetrics.charWidth(c);
    }
 
+   /**
+    * @throws NullPointerException if c is null
+    */
    public int charsWidth(char[] c, int ofs, int len) {
       return fontMetrics.charsWidth(c, ofs, len);
    }
@@ -118,14 +121,14 @@ public class FontSwing extends FontJ2SE {
       dc.root(this, FontSwing.class, "@line119");
       toStringPrivate(dc);
       super.toString(dc.sup());
-      dc.appendVarWithNewLine("ascent", getAscent());
-      dc.appendVarWithSpace("descent", getDescent());
       dc.nl();
       cdcSwing.getSwingCoreCtx().toSCD().d(fontAwt, dc);
    }
 
    private void toStringPrivate(Dctx dc) {
-
+      dc.appendVarWithSpace("Name", getName());
+      dc.appendVarWithSpace("ascent", getAscent());
+      dc.appendVarWithSpace("descent", getDescent());
    }
 
    public void toString1Line(Dctx dc) {
