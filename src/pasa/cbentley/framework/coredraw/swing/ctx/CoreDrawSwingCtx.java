@@ -4,16 +4,12 @@
  */
 package pasa.cbentley.framework.coredraw.swing.ctx;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.swing.SwingUtilities;
 
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
 import pasa.cbentley.byteobjects.src4.ctx.BOCtx;
 import pasa.cbentley.byteobjects.src4.ctx.IConfigBO;
+import pasa.cbentley.core.src4.interfaces.IFeaturable;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.swing.ctx.IFlagsToStringSwingCore;
 import pasa.cbentley.core.swing.ctx.SwingCoreCtx;
@@ -21,6 +17,7 @@ import pasa.cbentley.framework.coredraw.j2se.ctx.CoreDrawJ2seCtx;
 import pasa.cbentley.framework.coredraw.j2se.engine.FontCustomizerJ2SE;
 import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.ctx.ITechCtxSettingsCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.interfaces.IFontCustomizer;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImageFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IScaler;
@@ -39,7 +36,7 @@ import pasa.cbentley.framework.coredraw.swing.engine.ScalerSwing;
  * @author Charles Bentley
  *
  */
-public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
+public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
 
    public static final int      CTX_ID = 4991;
 
@@ -71,10 +68,10 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       if (this.getClass() == CoreDrawSwingCtx.class) {
          a_Init();
       }
-      
+
       //#debug
       toDLog().pInit("Created", this, CoreDrawSwingCtx.class, "CoreDrawSwingCtx", LVL_05_FINE, true);
-      
+
    }
 
    /**
@@ -85,34 +82,8 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       this(null, sc, boc);
    }
 
-   public boolean hasFeatureSupport(int featureID) {
-      switch (featureID) {
-         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
-            return true;
-         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
-            return true;
-         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
-            return true;
-         default:
-            return super.hasFeatureSupport(featureID);
-      }
-   }
-
    public void callSerially(Runnable run) {
       SwingUtilities.invokeLater(run);
-   }
-
-   public boolean isFeatureEnabled(int featureID) {
-      switch (featureID) {
-         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
-            return false;
-         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
-            return getSettingsBO().get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_02_MODE_ALIAS1) != ITechDrawer.MODSET_APP_ALIAS_2_OFF;
-         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
-            return getSettingsBO().get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1) != ITechDrawer.MODSET_APP_ALIAS_2_OFF;
-         default:
-            return super.isFeatureEnabled(featureID);
-      }
    }
 
    public boolean featureEnable(int featureID, boolean b) {
@@ -151,10 +122,21 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
    }
 
    public int getFeatureInt(int featureID) {
-      // TODO Auto-generated method stub
+      //nothing here right now
+      switch (featureID) {
+         case SUP_ID_07_IMAGE_SCALING:
+            break;
+         case SUP_ID_06_CUSTOM_FONTS:
+            break;
+         default:
+            break;
+      }
       return 0;
    }
 
+   /**
+    * Returns {@link IFontCustomizer} for {@link ITechFeaturesDraw#SUP_ID_06_CUSTOM_FONTS}
+    */
    public Object getFeatureObject(int featureID) {
       if (featureID == ITechFeaturesDraw.SUP_ID_06_CUSTOM_FONTS) {
          return getFontCustomizerSwingLazy();
@@ -197,6 +179,47 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       return sc;
    }
 
+   /**
+    * <p>
+    * 
+    * This Swing does support for
+    * 
+    * <li> {@link ITechFeaturesDraw#SUP_ID_03_OPEN_GL}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_04_ALIAS}
+    * <li> {@link ITechFeaturesDraw#SUP_ID_05_ALIAS_TEXT}
+    * 
+    * </p>
+    * 
+    * <p>
+    * See feature support of J2SE for more at {@link CoreDrawJ2seCtx}{@link #hasFeatureSupport(int)}
+    * </p>
+    */
+   public boolean hasFeatureSupport(int featureID) {
+      switch (featureID) {
+         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
+            return true;
+         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
+            return true;
+         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
+            return true;
+         default:
+            return super.hasFeatureSupport(featureID);
+      }
+   }
+
+   public boolean isFeatureEnabled(int featureID) {
+      switch (featureID) {
+         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
+            return false;
+         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
+            return getSettingsBO().get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_02_MODE_ALIAS1) != ITechDrawer.MODSET_APP_ALIAS_2_OFF;
+         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
+            return getSettingsBO().get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1) != ITechDrawer.MODSET_APP_ALIAS_2_OFF;
+         default:
+            return super.isFeatureEnabled(featureID);
+      }
+   }
+
    protected void matchConfig(IConfigBO config, ByteObject settings) {
       super.matchConfig(config, settings);
    }
@@ -206,6 +229,11 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       dc.root(this, CoreDrawSwingCtx.class);
       toStringPrivate(dc);
       super.toString(dc.sup());
+      dc.nlLvl(configDrawSwing, "configDrawSwing");
+      dc.nlLvl(fontCustomizerSwing, "fontCustomizerSwing");
+      dc.nlLvl(factoryFont, "factoryFont");
+      dc.nlLvl(factoryImage, "factoryImage");
+      dc.nlLvl(scaler, "scaler");
    }
 
    public void toString1Line(Dctx dc) {
@@ -213,10 +241,6 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       toStringPrivate(dc);
       super.toString1Line(dc.sup1Line());
 
-      dc.nlLvl(fontCustomizerSwing, "fontCustomizerSwing");
-      dc.nlLvl(factoryFont, "factoryFont");
-      dc.nlLvl(factoryImage, "factoryImage");
-      dc.nlLvl(scaler, "scaler");
    }
 
    public void toStringFlagSetOn(int flag, boolean b, Dctx dctx) {

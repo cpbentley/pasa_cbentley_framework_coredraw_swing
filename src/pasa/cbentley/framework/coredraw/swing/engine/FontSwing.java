@@ -12,6 +12,7 @@ import java.text.AttributedCharacterIterator.Attribute;
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.coredraw.j2se.engine.FontJ2SE;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFont;
 import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
 
 /**
@@ -65,8 +66,41 @@ public class FontSwing extends FontJ2SE {
             break;
          //TODO underline as text attribute
       }
-      this.fontAwt = new java.awt.Font(fontName, fontAwtStyle, points);
+      this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle, points);
       this.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(this.fontAwt);
+   }
+
+   public FontSwing(CoreDrawSwingCtx cdcSwing, String face, int style, int fontPoints) {
+      super(cdcSwing);
+      this.cdcSwing = cdcSwing;
+      this.fontNameInit = face;
+      int fontAwtStyle = java.awt.Font.PLAIN;
+      switch (style) {
+         case STYLE_BOLD:
+            fontAwtStyle = java.awt.Font.BOLD;
+            break;
+         case STYLE_ITALIC:
+            fontAwtStyle = java.awt.Font.ITALIC;
+            break;
+      }
+      
+      this.points = fontPoints + cac.getFontFactory().getFontPointExtraShift();
+      this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle, points);
+      this.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(this.fontAwt);
+
+      this.style = style;
+      int size = ITechFont.SIZE_1_TINY;
+      if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_5_HUGE)) {
+         size = ITechFont.SIZE_5_HUGE;
+      } else if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_4_LARGE)) {
+         size = ITechFont.SIZE_4_LARGE;
+      } else if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_3_MEDIUM)) {
+         size = ITechFont.SIZE_3_MEDIUM;
+      } else if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_2_SMALL)) {
+         size = ITechFont.SIZE_2_SMALL;
+      }
+      this.size = size;
+      this.face = (stringWidth("m") == stringWidth("i")) ? FACE_MONOSPACE : FACE_PROPORTIONAL;
    }
 
    public int getAscent() {
