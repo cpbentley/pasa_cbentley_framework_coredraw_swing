@@ -54,11 +54,11 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
 
    /**
     * 
-    * @param configDraw when null ConfigCoreDrawSwingDefault is used
+    * @param config when null ConfigCoreDrawSwingDefault is used
     * @param boc
     */
-   public CoreDrawSwingCtx(IConfigCoreDrawSwing configDraw, SwingCoreCtx sc, BOCtx boc) {
-      super((configDraw == null) ? new ConfigCoreDrawSwingDef(boc.getUCtx()) : configDraw, boc);
+   public CoreDrawSwingCtx(IConfigCoreDrawSwing config, SwingCoreCtx sc, BOCtx boc) {
+      super(config == null ? new ConfigCoreDrawSwingDef(boc.getUC()) : config, sc, boc);
       this.sc = sc;
       this.configDrawSwing = (IConfigCoreDrawSwing) getConfig(); //use getter in case null parameter we get the default config
       factoryFont = new FontFactorySwing(this);
@@ -79,7 +79,7 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
     * @param boc
     */
    public CoreDrawSwingCtx(SwingCoreCtx sc, BOCtx boc) {
-      this(null, sc, boc);
+      this(new ConfigCoreDrawSwingDef(boc.getUCtx()), sc, boc);
    }
 
    public void callSerially(Runnable run) {

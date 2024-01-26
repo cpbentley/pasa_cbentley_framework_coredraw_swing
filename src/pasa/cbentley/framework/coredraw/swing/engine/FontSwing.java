@@ -152,7 +152,7 @@ public class FontSwing extends FontJ2SE {
 
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, FontSwing.class, "@line119");
+      dc.root(this, FontSwing.class, 160);
       toStringPrivate(dc);
       super.toString(dc.sup());
       dc.nl();
