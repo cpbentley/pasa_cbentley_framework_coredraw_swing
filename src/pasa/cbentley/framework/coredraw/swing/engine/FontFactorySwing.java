@@ -7,8 +7,13 @@ package pasa.cbentley.framework.coredraw.swing.engine;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.swing.stringables.StringableFontAwt;
@@ -39,8 +44,7 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       super(scc);
       this.scc = scc;
       //this is parametrize by launch values
-
-      fontPoints = scc.getConfigCoreDrawJ2se().getFontPoints();
+     
       fontPointsExtraShift = scc.getConfigCoreDrawJ2se().getFontPointsExtraShift();
    }
 
@@ -109,6 +113,25 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       fontPoints = vs.fontPoints[0];
    }
 
+   public String[] getMonoSpaceFonts() {
+      Font fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+      List monoFonts1 = new ArrayList();
+
+      FontRenderContext frc = new FontRenderContext(null, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+      for (Font font : fonts) {
+         Rectangle2D iBounds = font.getStringBounds("i", frc);
+         Rectangle2D mBounds = font.getStringBounds("m", frc);
+         if (iBounds.getWidth() == mBounds.getWidth()) {
+            monoFonts1.add(font);
+         }
+      }
+      String[] ar = new String[monoFonts1.size()];
+      for (int i = 0; i < ar.length; i++) {
+         ar[i] = ((Font) monoFonts1.get(i)).getFontName();
+      }
+      return ar;
+   }
+
    public IMFont getFont(int face, int style, int size) {
       IMFont f = getFontCached(face, style, size);
       if (f == null) {
@@ -118,6 +141,10 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       return f;
    }
 
+   protected IMFont createFont(int face, int style, int size) {
+      return new FontSwing(scc, face, style, size);
+   }
+
    public float getFontScale(int size) {
       return 1;
    }
@@ -125,7 +152,6 @@ public class FontFactorySwing extends FontFactoryJ2SE {
    public IMFont getFont(String face, int style, int fontPoint) {
       return new FontSwing(scc, face, style, fontPoint);
    }
-
 
    //#mdebug
    public void toString(Dctx dc) {

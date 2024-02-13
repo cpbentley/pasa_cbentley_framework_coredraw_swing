@@ -7,19 +7,20 @@ package pasa.cbentley.framework.coredraw.swing.ctx;
 import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.coredraw.j2se.ctx.ConfigCoreDrawJ2seDef;
-import pasa.cbentley.framework.coredraw.src4.interfaces.ITechDrawer;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
 
 public class ConfigCoreDrawSwingDef extends ConfigCoreDrawJ2seDef implements IConfigCoreDrawSwing {
-
-
 
    public ConfigCoreDrawSwingDef(UCtx uc) {
       super(uc);
    }
-   
+
+   public int getAliasModeText() {
+      return ITechGraphics.MODSET_APP_ALIAS_0_BEST;
+   }
 
    public int getAliasMode() {
-      return ITechDrawer.MODSET_APP_ALIAS_0_BEST;
+      return ITechGraphics.MODSET_APP_ALIAS_0_BEST;
    }
 
    //#mdebug
@@ -30,7 +31,7 @@ public class ConfigCoreDrawSwingDef extends ConfigCoreDrawJ2seDef implements ICo
    }
 
    private void toStringPrivate(Dctx dc) {
-      
+
    }
 
    public void toString1Line(Dctx dc) {
@@ -40,6 +41,5 @@ public class ConfigCoreDrawSwingDef extends ConfigCoreDrawJ2seDef implements ICo
    }
 
    //#enddebug
-   
 
 }

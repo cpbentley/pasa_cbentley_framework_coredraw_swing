@@ -9,15 +9,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
 import pasa.cbentley.byteobjects.src4.ctx.IEventsBO;
-import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.event.BusEvent;
 import pasa.cbentley.core.src4.event.IEventConsumer;
 import pasa.cbentley.core.src4.interfaces.ITechThread;
@@ -27,11 +29,11 @@ import pasa.cbentley.core.src4.utils.ColorUtils;
 import pasa.cbentley.framework.coredraw.j2se.engine.GraphicsJ2SE;
 import pasa.cbentley.framework.coredraw.src4.ctx.IEventsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
-import pasa.cbentley.framework.coredraw.src4.ctx.ITechCtxSettingsCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.ctx.IBOCtxSettingsCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.ctx.ToStringStaticCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImage;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IMFont;
-import pasa.cbentley.framework.coredraw.src4.interfaces.ITechDrawer;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFeaturesDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
 import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
@@ -41,42 +43,42 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    /** 
     * Rectangle for getting the AWT clip information into 
     */
-   private java.awt.Rectangle       clip      = new java.awt.Rectangle();
+   private java.awt.Rectangle  clip      = new java.awt.Rectangle();
 
-   private int                      color;
+   private int                 color;
 
    /** 
     */
-   private FontSwing                fontSwing = null;
+   private FontSwing           fontSwing = null;
 
-   private int                      fwFlags;
+   private int                 fwFlags;
 
    /** 
     * AWT Graphics context.  
     * <br>
     * This is passed in the constructor, but will be created from the getGraphics call on an AWT Image
     */
-   private java.awt.Graphics2D      graphics;
+   private java.awt.Graphics2D graphics;
 
-   private Stroke                   gStroke;
+   private Stroke              gStroke;
 
-   protected final CoreDrawSwingCtx scc;
+   private int                 stroke;
 
-   private int                      stroke;
+   private int                 translate_x;
 
-   private int                      translate_x;
-
-   private int                      translate_y;
+   private int                 translate_y;
 
    /**
-    * When use, a call to {@link GraphicsSwing#setGraphics2D(Graphics2D)} must be made
-    * before using the object
+    * When use, a call to {@link GraphicsSwing#setGraphics2D(Graphics2D)} must be made before using the object.
     * @param scc
     */
    public GraphicsSwing(CoreDrawSwingCtx scc) {
       super(scc);
-      this.scc = scc;
       aInit();
+   }
+
+   public CoreDrawSwingCtx getCDCSwing() {
+      return (CoreDrawSwingCtx) cdc;
    }
 
    /**
@@ -93,7 +95,6 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
     */
    public GraphicsSwing(CoreDrawSwingCtx scc, java.awt.Graphics2D g) {
       super(scc);
-      this.scc = scc;
       setGraphics2D(g);
       aInit();
    }
@@ -104,54 +105,82 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
     * @param g
     * @param renderingFlags Swing rendering hints
     */
-   public GraphicsSwing(CoreDrawSwingCtx scc, java.awt.Graphics2D g, int renderingFlags) {
+   public GraphicsSwing(CoreDrawSwingCtx scc, java.awt.Graphics2D g, RenderingHints rendering) {
       super(scc);
       //register for ctx events
-      this.scc = scc;
       setGraphics2D(g);
-      if (renderingFlags == 0) {
-         //flags.. not need for a special tech params
-      } else {
-         createTech();
-         tech.set1(DRAWER_OFFSET_02_MODE_ALIAS1, MODSET_APP_ALIAS_1_ON);
-      }
       aInit();
+      graphics.addRenderingHints(rendering);
+   }
+
+   /**
+    * <li> {@link RenderingHints#VALUE_ANTIALIAS_DEFAULT}
+    * <li> {@link RenderingHints#VALUE_ANTIALIAS_ON}
+    * <li> {@link RenderingHints#VALUE_ANTIALIAS_OFF}
+    * <br>
+    * <li> {@link RenderingHints#VALUE_ALPHA_INTERPOLATION_DEFAULT}
+    * <li> {@link RenderingHints#VALUE_ALPHA_INTERPOLATION_QUALITY}
+    * <li> {@link RenderingHints#VALUE_ALPHA_INTERPOLATION_SPEED}
+    * 
+    * 
+    */
+   public void setRenderingHints() {
+      Map<Key, Object> map = new HashMap<Key, Object>(5);
+      map.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      map.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+
+      graphics.addRenderingHints(map);
    }
 
    private void aInit() {
-      fontSwing = (FontSwing) scc.getFontFactorySwing().getDefaultFont();
+      fontSwing = (FontSwing) cdc.getFontFactory().getDefaultFont();
    }
 
    /**
     * This method pins the {@link GraphicsSwing} into memory.
     */
    public void registerForChanges() {
-      int pid = IEventsBO.PID_1_CTX;
-      int eid = IEventsBO.PID_1_CTX_1_SETTINGS_CHANGE;
-      scc.getBOC().getEventBus().addConsumer(this, pid, eid, ITechThread.THREAD_MODE_1_MAIN_NOW);
+      int pid = IEventsBO.PID_01_CTX;
+      int eid = IEventsBO.PID_01_CTX_1_SETTINGS_CHANGE;
+      cdc.getBOC().getEventBus().addConsumer(this, pid, eid, ITechThread.THREAD_MODE_1_MAIN_NOW);
    }
 
    /**
-    * Apply ctx wide settings from {@link ITechCtxSettingsCoreDraw}
+    * Apply ctx wide settings from {@link IBOCtxSettingsCoreDraw}
     */
    public void applySettings() {
       applySettingsAlias();
    }
 
    public void applySettingsAlias() {
-      ByteObject tech = scc.getSettingsBO();
+      ByteObject tech = cdc.getBOCtxSettings();
+
+      int mode = tech.get1(IBOCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_02_MODE_ALIAS1);
+      applySettingsAlias(mode);
+
+      int modeText = tech.get1(IBOCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1);
+      applySettingsAliasText(modeText);
+   }
+
+   public void applySettingsAlias(int mode) {
       Object hints = null;
-      int mode = tech.get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_02_MODE_ALIAS1);
-      if (mode == ITechDrawer.MODSET_APP_ALIAS_0_BEST || mode == ITechDrawer.MODSET_APP_ALIAS_1_ON) {
+      //#debug
+      toDLog().pFlow("AliasMode=" + ToStringStaticCoreDraw.aliasMode(mode), this, GraphicsSwing.class, "applySettingsAlias@140", LVL_05_FINE, true);
+      if (mode == ITechGraphics.MODSET_APP_ALIAS_0_BEST || mode == ITechGraphics.MODSET_APP_ALIAS_1_ON) {
          hints = RenderingHints.VALUE_ANTIALIAS_ON;
       } else {
          hints = RenderingHints.VALUE_ANTIALIAS_OFF;
       }
       RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, hints);
       graphics.addRenderingHints(rh);
+   }
 
-      int modeText = tech.get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1);
-      if (modeText == ITechDrawer.MODSET_APP_ALIAS_0_BEST || modeText == ITechDrawer.MODSET_APP_ALIAS_1_ON) {
+   public void applySettingsAliasText(int mode) {
+      Object hints = null;
+      //#debug
+      toDLog().pFlow("AliasMode=" + ToStringStaticCoreDraw.aliasMode(mode), this, GraphicsSwing.class, "applySettingsAlias@140", LVL_05_FINE, true);
+      if (mode == ITechGraphics.MODSET_APP_ALIAS_0_BEST || mode == ITechGraphics.MODSET_APP_ALIAS_1_ON) {
          hints = RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
       } else {
          hints = RenderingHints.VALUE_TEXT_ANTIALIAS_OFF;
@@ -166,8 +195,8 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    }
 
    public void consumeEvent(BusEvent e) {
-      if (e.getPID() == IEventsBO.PID_1_CTX) {
-         if (e.getEventID() == IEventsBO.PID_1_CTX_1_SETTINGS_CHANGE) {
+      if (e.getPID() == IEventsBO.PID_01_CTX) {
+         if (e.getEventID() == IEventsBO.PID_01_CTX_1_SETTINGS_CHANGE) {
             int param1 = e.getParam1();
             if (param1 == IEventsCoreDraw.SETTINGS_0_ALL) {
                applySettings();
@@ -184,7 +213,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
     * Called when {@link GraphicsSwing} is not used anymore
     */
    public void destroy() {
-      scc.getBOC().getEventBus().removeConsumer(this);
+      cdc.getBOC().getEventBus().removeConsumer(this);
    }
 
    /**
@@ -522,22 +551,23 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
     */
    public boolean featureEnable(int featureID, boolean enable) {
       if (featureID == ITechFeaturesDraw.SUP_ID_04_ALIAS) {
-         if (tech == null) {
-            //return the default settings
-            createTech();
-            if (enable) {
-               tech.set1(DRAWER_OFFSET_02_MODE_ALIAS1, MODSET_APP_ALIAS_2_OFF);
-            } else {
-               tech.set1(DRAWER_OFFSET_02_MODE_ALIAS1, MODSET_APP_ALIAS_1_ON);
-            }
-         } else {
-            if (enable) {
-               tech.set1(DRAWER_OFFSET_02_MODE_ALIAS1, MODSET_APP_ALIAS_2_OFF);
-            } else {
-               tech.set1(DRAWER_OFFSET_02_MODE_ALIAS1, MODSET_APP_ALIAS_1_ON);
-            }
+         int newValue = ITechGraphics.MODSET_APP_ALIAS_2_OFF;
+         if (enable) {
+            newValue = ITechGraphics.MODSET_APP_ALIAS_1_ON;
          }
+         boGraphics.set1(GRAPHICS_OFFSET_02_MODE_ALIAS1, newValue);
+         applySettingsAlias(newValue);
          return true;
+      } else if (featureID == ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT) {
+         int newValue = ITechGraphics.MODSET_APP_ALIAS_2_OFF;
+         if (enable) {
+            newValue = ITechGraphics.MODSET_APP_ALIAS_1_ON;
+         }
+         boGraphics.set1(GRAPHICS_OFFSET_02_MODE_ALIAS1, newValue);
+         applySettingsAliasText(newValue);
+         return true;
+      } else if (featureID == ITechFeaturesDraw.SUP_ID_03_OPEN_GL) {
+         return false;
       }
       return false;
    }
@@ -589,7 +619,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    }
 
    public IMFont getDefaultFont() {
-      return scc.getFontFactory().getDefaultFont();
+      return cdc.getFontFactory().getDefaultFont();
    }
 
    /**
@@ -616,7 +646,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
     * 
     */
    public IMFont getFont(int face, int style, int size) {
-      return scc.getFontFactory().getFont(face, style, size);
+      return cdc.getFontFactory().getFont(face, style, size);
    }
 
    public int getGrayScale() {
@@ -656,11 +686,11 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
     */
    public boolean hasFeatureEnabled(int featureID) {
       if (featureID == ITechFeaturesDraw.SUP_ID_04_ALIAS) {
-         if (tech == null) {
+         if (boGraphics == null) {
             //return the default settings
          } else {
-            int mode = tech.get1(DRAWER_OFFSET_02_MODE_ALIAS1);
-            if (mode == MODSET_APP_ALIAS_2_OFF) {
+            int mode = boGraphics.get1(GRAPHICS_OFFSET_02_MODE_ALIAS1);
+            if (mode == ITechGraphics.MODSET_APP_ALIAS_2_OFF) {
                return false;
             } else {
                return true;
@@ -700,7 +730,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    public void setFont(IMFont font) {
       this.fontSwing = (FontSwing) font;
       if (this.fontSwing == null) {
-         this.fontSwing = (FontSwing) scc.getFontFactory().getDefaultFont();
+         this.fontSwing = (FontSwing) cdc.getFontFactory().getDefaultFont();
       }
       graphics.setFont(this.fontSwing.getFontAWT());
    }
@@ -753,11 +783,11 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
       dc.appendVarWithSpace("translate_y", translate_y);
       super.toString(dc.sup());
 
-      dc.setFlagData(scc, IFlagToStringCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES, true);
-      dc.setFlagData(scc, IFlagToStringCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, false);
+      dc.setFlagData(cdc, IFlagToStringCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES, true);
+      dc.setFlagData(cdc, IFlagToStringCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, false);
       dc.nlLvl(fontSwing, "Current FontSwing");
 
-      scc.getSwingCoreCtx().toSCD().d(graphics, dc);
+      getCDCSwing().getSwingCoreCtx().toSCD().d(graphics, dc);
    }
 
    private void toStringPrivate(Dctx dc) {

@@ -6,10 +6,7 @@ package pasa.cbentley.framework.coredraw.swing.engine;
 
 import java.awt.FontMetrics;
 import java.awt.Toolkit;
-import java.awt.font.TextAttribute;
-import java.text.AttributedCharacterIterator.Attribute;
 
-import pasa.cbentley.core.src4.ctx.UCtx;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.coredraw.j2se.engine.FontJ2SE;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFont;

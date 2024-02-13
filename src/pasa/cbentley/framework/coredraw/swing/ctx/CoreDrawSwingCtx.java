@@ -16,13 +16,13 @@ import pasa.cbentley.core.swing.ctx.SwingCoreCtx;
 import pasa.cbentley.framework.coredraw.j2se.ctx.CoreDrawJ2seCtx;
 import pasa.cbentley.framework.coredraw.j2se.engine.FontCustomizerJ2SE;
 import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
-import pasa.cbentley.framework.coredraw.src4.ctx.ITechCtxSettingsCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.ctx.IBOCtxSettingsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontCustomizer;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImageFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IScaler;
-import pasa.cbentley.framework.coredraw.src4.interfaces.ITechDrawer;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFeaturesDraw;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
 import pasa.cbentley.framework.coredraw.swing.engine.FontCustomizerSwing;
 import pasa.cbentley.framework.coredraw.swing.engine.FontFactorySwing;
 import pasa.cbentley.framework.coredraw.swing.engine.ImageFactorySwing;
@@ -70,7 +70,7 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
       }
 
       //#debug
-      toDLog().pInit("Created", this, CoreDrawSwingCtx.class, "CoreDrawSwingCtx", LVL_05_FINE, true);
+      toDLog().pInit("", this, CoreDrawSwingCtx.class, "Created@75", LVL_04_FINER, true);
 
    }
 
@@ -92,19 +92,19 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
             return false;
          case ITechFeaturesDraw.SUP_ID_04_ALIAS:
             //
-            int v = ITechDrawer.MODSET_APP_ALIAS_2_OFF;
+            int v = ITechGraphics.MODSET_APP_ALIAS_2_OFF;
             if (b) {
-               v = ITechDrawer.MODSET_APP_ALIAS_0_BEST;
+               v = ITechGraphics.MODSET_APP_ALIAS_0_BEST;
             }
-            getSettingsBO().set1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_02_MODE_ALIAS1, v);
+            getBOCtxSettings().set1(CTX_COREDRAW_OFFSET_02_MODE_ALIAS1, v);
             applySettingsAlias();
             return true;
          case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
-            int va = ITechDrawer.MODSET_APP_ALIAS_2_OFF;
+            int va = ITechGraphics.MODSET_APP_ALIAS_2_OFF;
             if (b) {
-               va = ITechDrawer.MODSET_APP_ALIAS_0_BEST;
+               va = ITechGraphics.MODSET_APP_ALIAS_0_BEST;
             }
-            getSettingsBO().set1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1, va);
+            getBOCtxSettings().set1(CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1, va);
             //generate event
             applySettingsAlias();
             return true;
@@ -159,9 +159,6 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
       return factoryFont;
    }
 
-   public FontFactorySwing getFontFactorySwing() {
-      return factoryFont;
-   }
 
    public IImageFactory getImageFactory() {
       return factoryImage;
@@ -212,9 +209,9 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
          case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
             return false;
          case ITechFeaturesDraw.SUP_ID_04_ALIAS:
-            return getSettingsBO().get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_02_MODE_ALIAS1) != ITechDrawer.MODSET_APP_ALIAS_2_OFF;
+            return getBOCtxSettings().get1(CTX_COREDRAW_OFFSET_02_MODE_ALIAS1) != ITechGraphics.MODSET_APP_ALIAS_2_OFF;
          case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
-            return getSettingsBO().get1(ITechCtxSettingsCoreDraw.CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1) != ITechDrawer.MODSET_APP_ALIAS_2_OFF;
+            return getBOCtxSettings().get1(CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1) != ITechGraphics.MODSET_APP_ALIAS_2_OFF;
          default:
             return super.isFeatureEnabled(featureID);
       }

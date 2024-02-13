@@ -69,7 +69,7 @@ public class ImageSwing extends ImageJ2SE {
          this.image = ImageIO.read(is);
       } catch (Exception ex) {
          //#debug
-         toLog().pEx("Exception loading image from InputStream.", null, ImageSwing.class, "", ex);
+         toDLog().pEx("Exception loading image from InputStream.", null, ImageSwing.class, "", ex);
          ex.printStackTrace();
       }
       this.isMutable = true;
