@@ -79,7 +79,7 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
     * @param boc
     */
    public CoreDrawSwingCtx(SwingCoreCtx sc, BOCtx boc) {
-      this(new ConfigCoreDrawSwingDef(boc.getUCtx()), sc, boc);
+      this(new ConfigCoreDrawSwingDef(boc.getUC()), sc, boc);
    }
 
    public void callSerially(Runnable run) {

@@ -166,7 +166,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    public void applySettingsAlias(int mode) {
       Object hints = null;
       //#debug
-      toDLog().pFlow("AliasMode=" + ToStringStaticCoreDraw.aliasMode(mode), this, GraphicsSwing.class, "applySettingsAlias@140", LVL_05_FINE, true);
+      toDLog().pFlow("AliasMode=" + ToStringStaticCoreDraw.aliasMode(mode), this, GraphicsSwing.class, "applySettingsAlias@169", LVL_05_FINE, true);
       if (mode == ITechGraphics.MODSET_APP_ALIAS_0_BEST || mode == ITechGraphics.MODSET_APP_ALIAS_1_ON) {
          hints = RenderingHints.VALUE_ANTIALIAS_ON;
       } else {
@@ -179,7 +179,7 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    public void applySettingsAliasText(int mode) {
       Object hints = null;
       //#debug
-      toDLog().pFlow("AliasMode=" + ToStringStaticCoreDraw.aliasMode(mode), this, GraphicsSwing.class, "applySettingsAlias@140", LVL_05_FINE, true);
+      toDLog().pFlow("AliasMode=" + ToStringStaticCoreDraw.aliasMode(mode), this, GraphicsSwing.class, "applySettingsAliasText@182", LVL_05_FINE, true);
       if (mode == ITechGraphics.MODSET_APP_ALIAS_0_BEST || mode == ITechGraphics.MODSET_APP_ALIAS_1_ON) {
          hints = RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
       } else {

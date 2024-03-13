@@ -44,19 +44,28 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       super(scc);
       this.scc = scc;
       //this is parametrize by launch values
-     
+
       fontPointsExtraShift = scc.getConfigCoreDrawJ2se().getFontPointsExtraShift();
    }
 
+   /**
+    * 
+    */
    public int getFontPoint(int size) {
-      //#debug
-      toDLog().pFlow("size=" + ToStringStaticCoreDraw.fontSize(size), null, FontFactorySwing.class, "getFontPoint", LVL_04_FINER, true);
+
       if (size < -1) {
-         return fontPoints[SIZE_0_DEFAULT];
+         throw new IllegalArgumentException();
       } else if (size > ITechFont.SIZE_X_NUM) {
+         //#debug
+         toDLog().pFlow("host size parameter. taking host size at face value -> points=" + size, null, FontFactorySwing.class, "getFontPoint@60", LVL_03_FINEST, true);
+
          return size;
       } else {
          int points = fontPoints[size];
+
+         //#debug
+         toDLog().pFlow("for size=" + ToStringStaticCoreDraw.fontSize(size) + " points=" + points, null, FontFactorySwing.class, "getFontPoint@64", LVL_03_FINEST, true);
+
          return points;
       }
    }
