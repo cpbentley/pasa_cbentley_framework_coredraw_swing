@@ -312,7 +312,9 @@ public class GraphicsSwing extends GraphicsJ2SE implements IGraphics, IEventCons
    }
 
    public void drawChars(char[] data, int offset, int length, int x, int y, int anchor) {
-      drawString(new String(data, offset, length), x, y, anchor);
+      
+      String str = new String(data, offset, length);
+      drawString(str, x, y, anchor);
    }
 
    public void drawImage(IImage imgx, int x, int y, int anchor) {
