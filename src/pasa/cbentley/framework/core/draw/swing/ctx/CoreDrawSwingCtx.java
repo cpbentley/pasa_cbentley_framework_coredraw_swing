@@ -82,7 +82,7 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
       }
 
       //#debug
-      toDLog().pInit("", this, CoreDrawSwingCtx.class, "Created@75", LVL_04_FINER, true);
+      toDLog().pCreate("", this, CoreDrawSwingCtx.class, "Created@75", LVL_04_FINER, true);
 
    }
 
