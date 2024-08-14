@@ -2,7 +2,7 @@
  * (c) 2018-2020 Charles-Philip Bentley
  * This code is licensed under MIT license (see LICENSE.txt for details)
  */
-package pasa.cbentley.framework.coredraw.swing.engine;
+package pasa.cbentley.framework.core.draw.swing.engine;
 
 import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
@@ -11,10 +11,10 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import pasa.cbentley.framework.coredraw.j2se.engine.ImageJ2SE;
+import pasa.cbentley.framework.core.draw.j2se.engine.ImageJ2se;
+import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
-import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
 
 /**
  * J2SE bridge class for the {@link mordan.bridge.swing.ui.ImageSwing} class of MIDP 2.0.
@@ -23,7 +23,7 @@ import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
  * @author Charles-Philip Bentley
  *
  */
-public class ImageSwing extends ImageJ2SE {
+public class ImageSwing extends ImageJ2se {
 
    protected final CoreDrawSwingCtx cdcSwing;
 

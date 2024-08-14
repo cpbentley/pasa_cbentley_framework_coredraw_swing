@@ -2,56 +2,72 @@
  * (c) 2018-2020 Charles-Philip Bentley
  * This code is licensed under MIT license (see LICENSE.txt for details)
  */
-package pasa.cbentley.framework.coredraw.swing.engine;
+package pasa.cbentley.framework.core.draw.swing.engine;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import pasa.cbentley.core.src4.ctx.UCtx;
-import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coredraw.src4.engine.ScalerAbstract;
-import pasa.cbentley.framework.coredraw.src4.interfaces.IScaler;
-import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
-import pasa.cbentley.layouter.src4.tech.ITechLayout;
+import pasa.cbentley.framework.core.draw.j2se.engine.ImageFactoryJ2se;
+import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
+import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
+import pasa.cbentley.framework.coredraw.src4.interfaces.IImage;
 
-public class ScalerSwing extends ScalerAbstract implements IScaler, ITechLayout {
+public class ImageFactorySwing extends ImageFactoryJ2se {
 
-   protected final CoreDrawSwingCtx cdsc;
+   protected final CoreDrawSwingCtx scc;
 
-   /**
-    * <li> {@link ITechLayout#SIZE_0_NONE} = 0
-    * <li> {@link ITechLayout#SIZE_1_SMALLEST} = 1
-    * <li> {@link ITechLayout#SIZE_2_SMALL} = 2
-    * <li> {@link ITechLayout#SIZE_3_MEDIUM} = 3
-    * <li> {@link ITechLayout#SIZE_4_BIG} = 5
-    * <li> {@link ITechLayout#SIZE_5_BIGGEST} = 10
-    * 
-    */
-   int[]                            scalePadding = new int[] { 0, 2, 4, 5, 6, 8, 10 };
+   public ImageFactorySwing(CoreDrawSwingCtx scc) {
+      super(scc);
+      this.scc = scc;
+   }
 
-   public ScalerSwing(CoreDrawSwingCtx cdc) {
-      super(cdc);
-      this.cdsc = cdc;
-      scalePadding = new int[6];
-      scalePadding[SIZE_0_NONE]=0;
-      scalePadding[SIZE_1_SMALLEST]=2;
-      scalePadding[SIZE_2_SMALL]=4;
-      scalePadding[SIZE_3_MEDIUM]=5;
-      scalePadding[SIZE_4_BIG]=8;
-      scalePadding[SIZE_5_BIGGEST]=10;
+   public IGraphics createGraphics(Object g) {
+      GraphicsSwing gw = new GraphicsSwing(scc, (Graphics2D) g);
+      //#debug
+      gw.toStringSetNameDebug("ImageFactorySwing");
+      return gw;
    }
 
    @Override
-   public int getScalePixel(int valu, int fun) {
-      if (fun == SCALE_0_PADDING) {
-         return scalePadding[fun];
-      } else if (fun == SCALE_1_EXPO) {
-         return scalePadding[fun];
-      } else {
-         throw new IllegalArgumentException();
+   public IImage createImage(InputStream is) {
+      return new ImageSwing(scc, is);
+   }
+
+   @Override
+   public IImage createImage(int w, int h) {
+      return new ImageSwing(scc, w, h);
+   }
+
+   /**
+    * When {@link ITechHost#HOST_FLAGX_1_ANTI_ALIAS} is false, the alpha value is ignored.
+    * @param w
+    * @param h
+    * @param color
+    * @return
+    */
+   public IImage createImage(int w, int h, int color) {
+      return new ImageSwing(scc, w, h, color);
+   }
+
+   @Override
+   public IImage createImage(byte[] data, int start, int len) {
+      return new ImageSwing(scc, new ByteArrayInputStream(data, start, len));
+   }
+
+   public IImage createRGBImage(int[] rgb, int width, int height, boolean processAlpha) {
+      int imageType = BufferedImage.TYPE_INT_RGB;
+      if (processAlpha) {
+         imageType = BufferedImage.TYPE_INT_ARGB;
       }
+      //IndexColorModel icm = new IndexColorModel(0, 0, rgb, 0, processAlpha, 0, 0);
+      BufferedImage bi = new BufferedImage(width, height, imageType);
+      bi.setRGB(0, 0, width, height, rgb, 0, width);
+      return new ImageSwing(scc, bi);
    }
 
    /**
@@ -119,25 +135,21 @@ public class ScalerSwing extends ScalerAbstract implements IScaler, ITechLayout 
 
       return ret;
    }
-   
-   //#mdebug
-   public void toString(Dctx dc) {
-      dc.root(this, "ScalerSwing");
-      toStringPrivate(dc);
-      super.toString(dc.sup());
+
+   public IImage createImage(IImage source) {
+      // TODO Auto-generated method stub
+      return null;
    }
 
-   private void toStringPrivate(Dctx dc) {
-      
+   public IImage createImage(IImage image, int x, int y, int width, int height, int transform) {
+      // TODO Auto-generated method stub
+      return null;
    }
 
-   public void toString1Line(Dctx dc) {
-      dc.root1Line(this, "ScalerSwing");
-      toStringPrivate(dc);
-      super.toString1Line(dc.sup1Line());
+   public IImage createImage(String name) throws IOException {
+      // TODO Auto-generated method stub
+      return null;
    }
 
-   //#enddebug
-   
 
 }

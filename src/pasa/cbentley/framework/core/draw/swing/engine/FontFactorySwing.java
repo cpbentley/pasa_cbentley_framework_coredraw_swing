@@ -2,7 +2,7 @@
  * (c) 2018-2020 Charles-Philip Bentley
  * This code is licensed under MIT license (see LICENSE.txt for details)
  */
-package pasa.cbentley.framework.coredraw.swing.engine;
+package pasa.cbentley.framework.core.draw.swing.engine;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -17,12 +17,12 @@ import java.util.List;
 
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.swing.stringables.StringableFontAwt;
-import pasa.cbentley.framework.coredraw.j2se.engine.FontFactoryJ2SE;
+import pasa.cbentley.framework.core.draw.j2se.engine.FontFactoryJ2se;
+import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
 import pasa.cbentley.framework.coredraw.src4.ctx.ToStringStaticCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.engine.VisualState;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IMFont;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFont;
-import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
 
 /**
  * 
@@ -36,7 +36,7 @@ import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
  * @author Charles Bentley
  *
  */
-public class FontFactorySwing extends FontFactoryJ2SE {
+public class FontFactorySwing extends FontFactoryJ2se {
 
    protected final CoreDrawSwingCtx scc;
 
@@ -44,31 +44,8 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       super(scc);
       this.scc = scc;
       //this is parametrize by launch values
-
-      fontPointsExtraShift = scc.getConfigCoreDrawJ2se().getFontPointsExtraShift();
    }
 
-   /**
-    * 
-    */
-   public int getFontPoint(int size) {
-
-      if (size < -1) {
-         throw new IllegalArgumentException();
-      } else if (size > ITechFont.SIZE_X_NUM) {
-         //#debug
-         toDLog().pFlow("host size parameter. taking host size at face value -> points=" + size, null, FontFactorySwing.class, "getFontPoint@60", LVL_03_FINEST, true);
-
-         return size;
-      } else {
-         int points = fontPoints[size];
-
-         //#debug
-         toDLog().pFlow("for size=" + ToStringStaticCoreDraw.fontSize(size) + " points=" + points, null, FontFactorySwing.class, "getFontPoint@64", LVL_03_FINEST, true);
-
-         return points;
-      }
-   }
 
    public void loadFont(String path) {
       InputStream is = this.getClass().getResourceAsStream(path);
@@ -82,20 +59,20 @@ public class FontFactorySwing extends FontFactoryJ2SE {
    public void loadFont(InputStream is, String path) {
       if (is == null) {
          //#debug
-         toDLog().pNull("Null InputStream for " + path, this, FontFactoryJ2SE.class, "loadFont", LVL_05_FINE, true);
+         toDLog().pNull("Null InputStream for " + path, this, FontFactoryJ2se.class, "loadFont", LVL_05_FINE, true);
          return;
       }
       try {
          Font font = Font.createFont(Font.TRUETYPE_FONT, is);
          if (font == null) {
             //#debug
-            toDLog().pNull("awt.Font is null for " + path, this, FontFactoryJ2SE.class, "loadFont", LVL_05_FINE, true);
+            toDLog().pNull("awt.Font is null for " + path, this, FontFactoryJ2se.class, "loadFont", LVL_05_FINE, true);
             return;
          }
 
          boolean registerFont = GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
          //#debug
-         toDLog().pInit("" + path + " registerFont=" + registerFont, getFontD(font), FontFactoryJ2SE.class, "loadFont", LVL_05_FINE, true);
+         toDLog().pInit("" + path + " registerFont=" + registerFont, getFontD(font), FontFactoryJ2se.class, "loadFont", LVL_05_FINE, true);
 
       } catch (FontFormatException | IOException e) {
          // TODO Auto-generated catch block
@@ -141,15 +118,6 @@ public class FontFactorySwing extends FontFactoryJ2SE {
       return ar;
    }
 
-   public IMFont getFont(int face, int style, int size) {
-      IMFont f = getFontCached(face, style, size);
-      if (f == null) {
-         f = new FontSwing(scc, face, style, size);
-         setFontFromCache(face, style, size, f);
-      }
-      return f;
-   }
-
    protected IMFont createFont(int face, int style, int size) {
       return new FontSwing(scc, face, style, size);
    }
@@ -164,21 +132,20 @@ public class FontFactorySwing extends FontFactoryJ2SE {
 
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, FontFactorySwing.class, "@line5");
+      dc.root(this, FontFactorySwing.class, 167);
       toStringPrivate(dc);
       super.toString(dc.sup());
+   }
+
+   public void toString1Line(Dctx dc) {
+      dc.root1Line(this, FontFactorySwing.class, 167);
+      toStringPrivate(dc);
+      super.toString1Line(dc.sup1Line());
    }
 
    private void toStringPrivate(Dctx dc) {
 
    }
-
-   public void toString1Line(Dctx dc) {
-      dc.root1Line(this, FontFactorySwing.class);
-      toStringPrivate(dc);
-      super.toString1Line(dc.sup1Line());
-   }
-
    //#enddebug
 
 }

@@ -2,31 +2,33 @@
  * (c) 2018-2020 Charles-Philip Bentley
  * This code is licensed under MIT license (see LICENSE.txt for details)
  */
-package pasa.cbentley.framework.coredraw.swing.ctx;
-
-import javax.swing.SwingUtilities;
+package pasa.cbentley.framework.core.draw.swing.ctx;
 
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
 import pasa.cbentley.byteobjects.src4.ctx.BOCtx;
 import pasa.cbentley.byteobjects.src4.ctx.IConfigBO;
-import pasa.cbentley.core.src4.interfaces.IFeaturable;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.swing.ctx.IFlagsToStringSwingCore;
 import pasa.cbentley.core.swing.ctx.SwingCoreCtx;
-import pasa.cbentley.framework.coredraw.j2se.ctx.CoreDrawJ2seCtx;
-import pasa.cbentley.framework.coredraw.j2se.engine.FontCustomizerJ2SE;
+import pasa.cbentley.framework.core.draw.j2se.ctx.CoreDrawJ2seCtx;
+import pasa.cbentley.framework.core.draw.j2se.engine.FontCustomizerJ2se;
+import pasa.cbentley.framework.core.draw.j2se.engine.HostDataDrawJ2se;
+import pasa.cbentley.framework.core.draw.j2se.engine.HostFeatureDrawJ2se;
+import pasa.cbentley.framework.core.draw.j2se.engine.HostServiceDrawJ2se;
+import pasa.cbentley.framework.core.draw.swing.engine.FontCustomizerSwing;
+import pasa.cbentley.framework.core.draw.swing.engine.FontFactorySwing;
+import pasa.cbentley.framework.core.draw.swing.engine.HostDataDrawSwing;
+import pasa.cbentley.framework.core.draw.swing.engine.HostFeatureDrawSwing;
+import pasa.cbentley.framework.core.draw.swing.engine.HostServiceDrawSwing;
+import pasa.cbentley.framework.core.draw.swing.engine.ImageFactorySwing;
+import pasa.cbentley.framework.core.draw.swing.engine.ScalerSwing;
 import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
-import pasa.cbentley.framework.coredraw.src4.ctx.IBOCtxSettingsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontCustomizer;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImageFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IScaler;
-import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFeaturesDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechGraphics;
-import pasa.cbentley.framework.coredraw.swing.engine.FontCustomizerSwing;
-import pasa.cbentley.framework.coredraw.swing.engine.FontFactorySwing;
-import pasa.cbentley.framework.coredraw.swing.engine.ImageFactorySwing;
-import pasa.cbentley.framework.coredraw.swing.engine.ScalerSwing;
+import pasa.cbentley.framework.coredraw.src4.interfaces.ITechHostFeatureDraw;
 
 /**
  * This ctx does not require SwingCtx.
@@ -36,9 +38,9 @@ import pasa.cbentley.framework.coredraw.swing.engine.ScalerSwing;
  * @author Charles Bentley
  *
  */
-public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
+public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
 
-   public static final int      CTX_ID = 4991;
+   public static final int      CTX_ID = 103;
 
    private IConfigCoreDrawSwing configDrawSwing;
 
@@ -47,6 +49,12 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
    private ImageFactorySwing    factoryImage;
 
    private FontCustomizerSwing  fontCustomizerSwing;
+
+   private HostDataDrawSwing    hostDataDrawSwing;
+
+   private HostFeatureDrawSwing hostFeatureDrawSwing;
+
+   private HostServiceDrawSwing hostServiceDrawSwing;
 
    protected final SwingCoreCtx sc;
 
@@ -65,6 +73,10 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
       factoryImage = new ImageFactorySwing(this);
       scaler = new ScalerSwing(this);
 
+      hostDataDrawSwing = new HostDataDrawSwing(this);
+      hostFeatureDrawSwing = new HostFeatureDrawSwing(this);
+      hostServiceDrawSwing = new HostServiceDrawSwing(this);
+
       if (this.getClass() == CoreDrawSwingCtx.class) {
          a_Init();
       }
@@ -82,15 +94,11 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
       this(new ConfigCoreDrawSwingDef(boc.getUC()), sc, boc);
    }
 
-   public void callSerially(Runnable run) {
-      SwingUtilities.invokeLater(run);
-   }
-
    public boolean featureEnable(int featureID, boolean b) {
       switch (featureID) {
-         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
+         case SUP_ID_03_OPEN_GL:
             return false;
-         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
+         case FEAT_02_ANTI_ALIAS:
             //
             int v = ITechGraphics.MODSET_APP_ALIAS_2_OFF;
             if (b) {
@@ -99,7 +107,7 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
             getBOCtxSettings().set1(CTX_COREDRAW_OFFSET_02_MODE_ALIAS1, v);
             applySettingsAlias();
             return true;
-         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
+         case FEAT_01_ANTI_ALIAS_TEXT:
             int va = ITechGraphics.MODSET_APP_ALIAS_2_OFF;
             if (b) {
                va = ITechGraphics.MODSET_APP_ALIAS_0_BEST;
@@ -135,16 +143,16 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
    }
 
    /**
-    * Returns {@link IFontCustomizer} for {@link ITechFeaturesDraw#SUP_ID_06_CUSTOM_FONTS}
+    * Returns {@link IFontCustomizer} for {@link ITechHostFeatureDraw#SUP_ID_06_CUSTOM_FONTS}
     */
    public Object getFeatureObject(int featureID) {
-      if (featureID == ITechFeaturesDraw.SUP_ID_06_CUSTOM_FONTS) {
+      if (featureID == SUP_ID_06_CUSTOM_FONTS) {
          return getFontCustomizerSwingLazy();
       }
       return null;
    }
 
-   public FontCustomizerJ2SE getFontCustomizerJ2SE() {
+   public FontCustomizerJ2se getFontCustomizerJ2SE() {
       return getFontCustomizerSwingLazy();
    }
 
@@ -159,6 +167,21 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
       return factoryFont;
    }
 
+   public HostDataDrawJ2se getHostDataDrawJ2SE() {
+      return hostDataDrawSwing;
+   }
+
+   public HostDataDrawSwing getHostDataDrawSwing() {
+      return hostDataDrawSwing;
+   }
+
+   public HostFeatureDrawJ2se getHostFeatureDrawJ2se() {
+      return hostFeatureDrawSwing;
+   }
+
+   public HostServiceDrawJ2se getHostServiceDrawJ2se() {
+      return hostServiceDrawSwing;
+   }
 
    public IImageFactory getImageFactory() {
       return factoryImage;
@@ -174,47 +197,6 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx implements IFeaturable {
 
    public SwingCoreCtx getSwingCoreCtx() {
       return sc;
-   }
-
-   /**
-    * <p>
-    * 
-    * This Swing does support for
-    * 
-    * <li> {@link ITechFeaturesDraw#SUP_ID_03_OPEN_GL}
-    * <li> {@link ITechFeaturesDraw#SUP_ID_04_ALIAS}
-    * <li> {@link ITechFeaturesDraw#SUP_ID_05_ALIAS_TEXT}
-    * 
-    * </p>
-    * 
-    * <p>
-    * See feature support of J2SE for more at {@link CoreDrawJ2seCtx}{@link #hasFeatureSupport(int)}
-    * </p>
-    */
-   public boolean hasFeatureSupport(int featureID) {
-      switch (featureID) {
-         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
-            return true;
-         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
-            return true;
-         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
-            return true;
-         default:
-            return super.hasFeatureSupport(featureID);
-      }
-   }
-
-   public boolean isFeatureEnabled(int featureID) {
-      switch (featureID) {
-         case ITechFeaturesDraw.SUP_ID_03_OPEN_GL:
-            return false;
-         case ITechFeaturesDraw.SUP_ID_04_ALIAS:
-            return getBOCtxSettings().get1(CTX_COREDRAW_OFFSET_02_MODE_ALIAS1) != ITechGraphics.MODSET_APP_ALIAS_2_OFF;
-         case ITechFeaturesDraw.SUP_ID_05_ALIAS_TEXT:
-            return getBOCtxSettings().get1(CTX_COREDRAW_OFFSET_03_MODE_TEXT_ALIAS1) != ITechGraphics.MODSET_APP_ALIAS_2_OFF;
-         default:
-            return super.isFeatureEnabled(featureID);
-      }
    }
 
    protected void matchConfig(IConfigBO config, ByteObject settings) {

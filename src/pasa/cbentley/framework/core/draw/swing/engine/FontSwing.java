@@ -2,15 +2,15 @@
  * (c) 2018-2020 Charles-Philip Bentley
  * This code is licensed under MIT license (see LICENSE.txt for details)
  */
-package pasa.cbentley.framework.coredraw.swing.engine;
+package pasa.cbentley.framework.core.draw.swing.engine;
 
 import java.awt.FontMetrics;
 import java.awt.Toolkit;
 
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coredraw.j2se.engine.FontJ2SE;
+import pasa.cbentley.framework.core.draw.j2se.engine.FontJ2se;
+import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
 import pasa.cbentley.framework.coredraw.src4.interfaces.ITechFont;
-import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
 
 /**
  * J2SE bridge class for the {@link mordan.bridge.swing.ui.FontSwing} class of MIDP 2.0 <br>
@@ -21,7 +21,7 @@ import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
  * @author Charles-Philip Bentley
  *
  */
-public class FontSwing extends FontJ2SE {
+public class FontSwing extends FontJ2se {
 
    /** 
     * Reference to an AWT Font object, created based on the MIDP font properties requested

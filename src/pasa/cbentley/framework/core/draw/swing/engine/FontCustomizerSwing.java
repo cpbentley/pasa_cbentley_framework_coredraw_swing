@@ -1,10 +1,10 @@
-package pasa.cbentley.framework.coredraw.swing.engine;
+package pasa.cbentley.framework.core.draw.swing.engine;
 
 import pasa.cbentley.core.src4.logging.Dctx;
-import pasa.cbentley.framework.coredraw.j2se.engine.FontCustomizerJ2SE;
-import pasa.cbentley.framework.coredraw.swing.ctx.CoreDrawSwingCtx;
+import pasa.cbentley.framework.core.draw.j2se.engine.FontCustomizerJ2se;
+import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
 
-public class FontCustomizerSwing extends FontCustomizerJ2SE {
+public class FontCustomizerSwing extends FontCustomizerJ2se {
 
    private final CoreDrawSwingCtx cdwc;
 
