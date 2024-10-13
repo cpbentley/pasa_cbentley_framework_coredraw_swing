@@ -4,6 +4,7 @@
  */
 package pasa.cbentley.framework.core.draw.swing.engine;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Toolkit;
 
@@ -26,7 +27,7 @@ public class FontSwing extends FontJ2se {
    /** 
     * Reference to an AWT Font object, created based on the MIDP font properties requested
     */
-   private java.awt.Font            fontAwt;
+   private Font                     fontAwt;
 
    /** 
     * FontMetrics object does most of the font width and height stuff for us
@@ -52,52 +53,48 @@ public class FontSwing extends FontJ2se {
    public FontSwing(CoreDrawSwingCtx cdcSwing, int face, int style, int size) {
       super(cdcSwing, face, style, size);
       this.cdcSwing = cdcSwing;
-      int fontAwtStyle = java.awt.Font.PLAIN;
 
-      switch (style) {
-         case STYLE_BOLD:
-            fontAwtStyle = java.awt.Font.BOLD;
-            break;
-         case STYLE_ITALIC:
-            fontAwtStyle = java.awt.Font.ITALIC;
-            break;
-         //TODO underline as text attribute
-      }
-      this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle, points);
+      int fontAwtStyle = getMapStyle(style);
+      //points are initialized by upper constructor
+      this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle , points);
       this.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(this.fontAwt);
+   }
+
+   private int getMapStyle(int style) {
+      switch (style) {
+         case STYLE_1_BOLD:
+            return Font.BOLD;
+         case STYLE_2_ITALIC:
+            return Font.ITALIC;
+         default:
+            return Font.PLAIN;
+      }
    }
 
    public FontSwing(CoreDrawSwingCtx cdcSwing, String face, int style, int fontPoints) {
       super(cdcSwing);
       this.cdcSwing = cdcSwing;
       this.fontNameInit = face;
-      int fontAwtStyle = java.awt.Font.PLAIN;
-      switch (style) {
-         case STYLE_BOLD:
-            fontAwtStyle = java.awt.Font.BOLD;
-            break;
-         case STYLE_ITALIC:
-            fontAwtStyle = java.awt.Font.ITALIC;
-            break;
-      }
       
-      this.points = fontPoints + cac.getFontFactory().getFontPointExtraShift();
+      int fontAwtStyle = getMapStyle(style);
+      this.points = fontPoints + cdc.getFontFactory().getFontPointExtraShift();
       this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle, points);
       this.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(this.fontAwt);
 
       this.style = style;
+      
       int size = ITechFont.SIZE_1_TINY;
-      if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_5_HUGE)) {
+      if (fontPoints >= cdc.getFontFactory().getFontPoint(SIZE_5_HUGE)) {
          size = ITechFont.SIZE_5_HUGE;
-      } else if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_4_LARGE)) {
+      } else if (fontPoints >= cdc.getFontFactory().getFontPoint(SIZE_4_LARGE)) {
          size = ITechFont.SIZE_4_LARGE;
-      } else if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_3_MEDIUM)) {
+      } else if (fontPoints >= cdc.getFontFactory().getFontPoint(SIZE_3_MEDIUM)) {
          size = ITechFont.SIZE_3_MEDIUM;
-      } else if (fontPoints >= cac.getFontFactory().getFontPoint(SIZE_2_SMALL)) {
+      } else if (fontPoints >= cdc.getFontFactory().getFontPoint(SIZE_2_SMALL)) {
          size = ITechFont.SIZE_2_SMALL;
       }
       this.size = size;
-      this.face = (stringWidth("m") == stringWidth("i")) ? FACE_MONOSPACE : FACE_PROPORTIONAL;
+      this.face = (stringWidth("m") == stringWidth("i")) ? FACE_01_MONOSPACE : FACE_02_PROPORTIONAL;
    }
 
    public int getAscent() {
