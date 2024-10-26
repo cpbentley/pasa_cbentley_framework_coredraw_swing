@@ -22,7 +22,7 @@ import pasa.cbentley.framework.core.draw.swing.engine.HostFeatureDrawSwing;
 import pasa.cbentley.framework.core.draw.swing.engine.HostServiceDrawSwing;
 import pasa.cbentley.framework.core.draw.swing.engine.ImageFactorySwing;
 import pasa.cbentley.framework.core.draw.swing.engine.ScalerSwing;
-import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.ctx.IToStringFlagsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontCustomizer;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IFontFactory;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImageFactory;
@@ -223,11 +223,11 @@ public class CoreDrawSwingCtx extends CoreDrawJ2seCtx {
    }
 
    public void toStringFlagSetOn(int flag, boolean b, Dctx dctx) {
-      if (flag == IFlagToStringCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES) {
-         dctx.setFlagData(sc, IFlagsToStringSwingCore.TOSTRING_FLAG_3_SHOW_FONT_ATTRIBUTES, b);
+      if (flag == IToStringFlagsCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES) {
+         dctx.setFlagToString(sc, IFlagsToStringSwingCore.TOSTRING_FLAG_3_SHOW_FONT_ATTRIBUTES, b);
       }
-      if (flag == IFlagToStringCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT) {
-         dctx.setFlagData(sc, IFlagsToStringSwingCore.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, b);
+      if (flag == IToStringFlagsCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT) {
+         dctx.setFlagToString(sc, IFlagsToStringSwingCore.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, b);
       }
    }
 

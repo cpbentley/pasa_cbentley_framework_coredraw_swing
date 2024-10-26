@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Toolkit;
 
+import pasa.cbentley.core.src4.ctx.IToStringFlagsUC;
+import pasa.cbentley.core.src4.interfaces.IToStringFlags;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.framework.core.draw.j2se.engine.FontJ2se;
 import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
@@ -56,7 +58,7 @@ public class FontSwing extends FontJ2se {
 
       int fontAwtStyle = getMapStyle(style);
       //points are initialized by upper constructor
-      this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle , points);
+      this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle, points);
       this.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(this.fontAwt);
    }
 
@@ -75,14 +77,14 @@ public class FontSwing extends FontJ2se {
       super(cdcSwing);
       this.cdcSwing = cdcSwing;
       this.fontNameInit = face;
-      
+
       int fontAwtStyle = getMapStyle(style);
       this.points = fontPoints + cdc.getFontFactory().getFontPointExtraShift();
       this.fontAwt = new java.awt.Font(fontNameInit, fontAwtStyle, points);
       this.fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(this.fontAwt);
 
       this.style = style;
-      
+
       int size = ITechFont.SIZE_1_TINY;
       if (fontPoints >= cdc.getFontFactory().getFontPoint(SIZE_5_HUGE)) {
          size = ITechFont.SIZE_5_HUGE;
@@ -146,11 +148,18 @@ public class FontSwing extends FontJ2se {
 
    //#mdebug
    public void toString(Dctx dc) {
-      dc.root(this, FontSwing.class, 160);
+      dc.root(this, FontSwing.class, toStringGetLine(149));
       toStringPrivate(dc);
       super.toString(dc.sup());
-      dc.nl();
-      cdcSwing.getSwingCoreCtx().toSCD().d(fontAwt, dc);
+
+      if (dc.hasFlagToStringUC(IToStringFlagsUC.FLAG_UC_10_HOST_OBJECTS)) {
+         //host objects are disabled by master flag
+         dc.nl();
+         cdcSwing.getSwingCoreCtx().toSCD().d(fontAwt, dc);
+      } else {
+         //
+         dc.append("fontAwt data is not printed. To Print it set IToStringFlagsUC.FLAG_UC_10_HOST_OBJECTS");
+      }
    }
 
    private void toStringPrivate(Dctx dc) {
@@ -160,7 +169,7 @@ public class FontSwing extends FontJ2se {
    }
 
    public void toString1Line(Dctx dc) {
-      dc.root1Line(this, FontSwing.class);
+      dc.root1Line(this, FontSwing.class, toStringGetLine(160));
       toStringPrivate(dc);
       super.toString1Line(dc.sup1Line());
    }

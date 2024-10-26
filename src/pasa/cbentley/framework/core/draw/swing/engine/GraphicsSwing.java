@@ -30,7 +30,7 @@ import pasa.cbentley.framework.core.draw.j2se.engine.GraphicsJ2se;
 import pasa.cbentley.framework.core.draw.swing.ctx.CoreDrawSwingCtx;
 import pasa.cbentley.framework.coredraw.src4.ctx.IBOCtxSettingsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.ctx.IEventsCoreDraw;
-import pasa.cbentley.framework.coredraw.src4.ctx.IFlagToStringCoreDraw;
+import pasa.cbentley.framework.coredraw.src4.ctx.IToStringFlagsCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.ctx.ToStringStaticCoreDraw;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IGraphics;
 import pasa.cbentley.framework.coredraw.src4.interfaces.IImage;
@@ -694,6 +694,8 @@ public class GraphicsSwing extends GraphicsJ2se implements IGraphics, IEventCons
    }
 
    public void setFont(IMFont font) {
+      //#debug
+      toDLog().pFlow("", font, GraphicsSwing.class, "setFont@700", LVL_04_FINER, true);
       this.fontSwing = (FontSwing) font;
       if (this.fontSwing == null) {
          this.fontSwing = (FontSwing) cdc.getFontFactory().getDefaultFont();
@@ -760,8 +762,8 @@ public class GraphicsSwing extends GraphicsJ2se implements IGraphics, IEventCons
       dc.appendVarWithSpace("translate_y", translate_y);
       super.toString(dc.sup());
 
-      dc.setFlagData(cdc, IFlagToStringCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES, true);
-      dc.setFlagData(cdc, IFlagToStringCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, false);
+      dc.setFlagToString(cdc, IToStringFlagsCoreDraw.TOSTRING_FLAG_3_IGNORE_FONT_ATTRIBUTES, true);
+      dc.setFlagToString(cdc, IToStringFlagsCoreDraw.TOSTRING_FLAG_4_SHOW_FONT_ENVIRONEMT, false);
       dc.nlLvl(fontSwing, "Current FontSwing");
 
       getCDCSwing().getSwingCoreCtx().toSCD().d(graphics, dc);
@@ -780,7 +782,7 @@ public class GraphicsSwing extends GraphicsJ2se implements IGraphics, IEventCons
    /**
     * translate needs to remember the current translation, since AWT doesn't provide getTranslate methods.
     */
-   public void translate(int x, int y) {
+   public void setTranslate(int x, int y) {
       graphics.translate(-translate_x, -translate_y);
       translate_x += x;
       translate_y += y;
